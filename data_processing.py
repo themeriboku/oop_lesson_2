@@ -100,13 +100,33 @@ avg_above = ranking_above.aggregate(lambda x: sum(x)/len(x), 'games')
 
 mid_fields = table1.filter(lambda x: 'midfielder' in x['position'])
 mid_pass = mid_fields.aggregate(lambda x: sum(x)/len(x), 'passes')
-
 forward = table1.filter(lambda x: 'forward' in x['position'])
 forward_pass = forward.aggregate(lambda x: sum(x)/len(x), 'passes')
 
 print(selected_players)
-print(f"{avg_below} vs {avg_above}")
-print(f"{mid_pass} vs {forward_pass}")
+print(f"average games ranking below 10 vs ranking above 10{avg_below} vs {avg_above}")
+print(f"middle fielder passes vs forward passes{mid_pass} vs {forward_pass}")
+
+first_class = table2.filter(lambda x: x['class'] == '1')
+first_class_paid = first_class.aggregate(lambda x: sum(x)/len(x), 'fare')
+
+third_class = table2.filter(lambda x: x['class'] == '3')
+third_class_paid = third_class.aggregate(lambda x: sum(x)/len(x), 'fare')
+
+survival_male = table2.filter(lambda x: x['gender'] == 'M' and x['survived'] == 'yes')
+survived_count_male = len(survival_male.table)
+
+survival_female = table2.filter(lambda x: x['gender'] == 'F' and x['survived'] == 'yes')
+survived_count_female = len(survival_female.table)
+
+print(f"survival male and female is {survived_count_male} vs {survived_count_female}")
+
+
+
+
+
+
+
 
 
 

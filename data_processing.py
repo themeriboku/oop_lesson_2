@@ -86,3 +86,28 @@ my_DB.insert(table1)
 my_DB.insert(table2)
 my_DB.insert(table3)
 
+
+b = table1.filter(lambda x: 'ia' in x['team'])
+c = b.filter(lambda x: int(x['minutes']) < 200)
+p = c.filter(lambda x: int(x['passes']) > 100)
+selected_players = p.select(['surname', 'team', 'position'])
+
+ranking_below = table3.filter(lambda x: int(x['ranking']) < 10)
+avg_below = ranking_below.aggregate(lambda x: sum(x)/len(x), 'games')
+
+ranking_above = table3.filter(lambda x: int(x['ranking']) >= 10)
+avg_above = ranking_above.aggregate(lambda x: sum(x)/len(x), 'games')
+
+mid_fields = table1.filter(lambda x: 'midfielder' in x['position'])
+mid_pass = mid_fields.aggregate(lambda x: sum(x)/len(x), 'passes')
+
+forward = table1.filter(lambda x: 'forward' in x['position'])
+forward_pass = forward.aggregate(lambda x: sum(x)/len(x), 'passes')
+
+print(selected_players)
+print(f"{avg_below} vs {avg_above}")
+print(f"{mid_pass} vs {forward_pass}")
+
+
+
+

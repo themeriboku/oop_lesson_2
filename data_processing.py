@@ -81,10 +81,12 @@ class Table:
 table1 = Table('Players', Players)
 table2 = Table('Titanic', Titanic)
 table3 = Table('Teams', Teams)
+
 my_DB = DB()
 my_DB.insert(table1)
 my_DB.insert(table2)
 my_DB.insert(table3)
+
 
 
 b = table1.filter(lambda x: 'ia' in x['team'])
@@ -125,6 +127,7 @@ survival_count_southampton = len(survival_male_southampton.table)
 
 print(f"survival male and female is {survived_count_male} vs {survived_count_female}")
 print(f" total number of male passengers embarked at Southampton = {survival_count_southampton}")
+
 
 
 

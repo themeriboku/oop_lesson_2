@@ -59,12 +59,24 @@ class Table:
                 filtered_table.table.append(item1)
         return filtered_table
     
+    def __is_float(self, element):
+        if element is None:
+            return False
+        try:
+            float(element)
+            return True
+        except ValueError:
+            return False
+
     def aggregate(self, function, aggregation_key):
         temps = []
         for item1 in self.table:
-            temps.append(float(item1[aggregation_key]))
+            if self.__is_float(item1[aggregation_key]):
+                temps.append(float(item1[aggregation_key]))
+            else:
+                temps.append(item1[aggregation_key])
         return function(temps)
-    
+
     def select(self, attributes_list):
         temps = []
         for item1 in self.table:
@@ -75,8 +87,23 @@ class Table:
             temps.append(dict_temp)
         return temps
 
+    def pivot_table (self, keys_to_pivot_list, keys_to_aggreagte_list, aggregate_func_list) :
+
+    # First create a list of unique values for each key
+        unique_values_list = []
+
+    # Here is an example of of unique_values_list for
+    # keys_to_pivot_list = ['embarked', 'gender', 'class']
+    # unique_values_list =
+    # [['Southampton', 'Cherbourg', 'Queenstown'], ['M', 'F'], ['3', '2','1']]
+
+    # Get the combination of unique_values_list
+    # You will make use of the function you implemented in Task 2
+
     def __str__(self):
         return self.table_name + ':' + str(self.table)
+
+
 
 table1 = Table('Players', Players)
 table2 = Table('Titanic', Titanic)
@@ -104,8 +131,8 @@ forward = table1.filter(lambda x: 'forward' in x['position'])
 forward_pass = forward.aggregate(lambda x: sum(x)/len(x), 'passes')
 
 print(selected_players)
-print(f"average games ranking below 10 vs ranking above 10{avg_below} vs {avg_above}")
-print(f"middle fielder passes vs forward passes{mid_pass} vs {forward_pass}")
+print(f"average games ranking below 10 vs ranking above 10 {avg_below} vs {avg_above}")
+print(f"middle fielder passes vs forward passes {mid_pass} vs {forward_pass}")
 
 first_class = table2.filter(lambda x: x['class'] == '1')
 first_class_paid = first_class.aggregate(lambda x: sum(x)/len(x), 'fare')

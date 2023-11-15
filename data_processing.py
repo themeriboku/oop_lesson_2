@@ -116,17 +116,14 @@ class Table:
                 key = keys_to_aggregate_list[idx]
                 aggregate_function = aggregate_func_list[idx]
                 aggregated_value = filtered_table.aggregate(aggregate_function, key)
-                aggregated_values.append({key: aggregated_value})
+                aggregated_values.append(aggregated_value)
 
-            # Combine the pivot keys and aggregated values into a dictionary
-            pivot_row = {}
-            for idx in range(len(keys_to_pivot_list)):
-                pivot_row[keys_to_pivot_list[idx]] = combo[idx]
-            for aggr in aggregated_values:
-                pivot_row.update(aggr)
+            # Combine the pivot keys and aggregated values into a list
+            pivot_row = [combo] + [aggregated_values]
 
             # Append the row to the pivot table
             pivot_table.table.append(pivot_row)
+
         return pivot_table
 
     def __str__(self):
@@ -175,11 +172,14 @@ survived_count_male = len(survival_male.table)
 survival_female = table2.filter(lambda x: x['gender'] == 'F' and x['survived'] == 'yes')
 survived_count_female = len(survival_female.table)
 
+survived_male_southampton = survival_male.filter(lambda x: x['embarked'] == 'Southampton')
+survived_male_southampton_count = len(survived_male_southampton.table)
+
 print(f"survival male and female is {survived_count_male} vs {survived_count_female}")
-
-
-
-
-
-
+print(f"male passenger embraked at southampton is {survived_male_southampton_count}")
+table4 = Table('titanic', Titanic)
+my_DB.insert(table4)
+my_table4 = my_DB.search('titanic')
+my_pivot = my_table4.pivot_table(['embarked', 'gender', 'class'], ['fare', 'fare', 'fare', 'last'], [lambda x: min(x), lambda x: max(x), lambda x: sum(x)/len(x), lambda x: len(x)])
+print(my_pivot)
 

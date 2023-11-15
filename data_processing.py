@@ -1,4 +1,5 @@
 import csv, os
+from combination_gen import gen_comb_list
 
 __location__ = os.path.realpath(
     os.path.join(os.getcwd(), os.path.dirname(__file__)))
@@ -87,18 +88,46 @@ class Table:
             temps.append(dict_temp)
         return temps
 
-    def pivot_table (self, keys_to_pivot_list, keys_to_aggreagte_list, aggregate_func_list) :
-
-    # First create a list of unique values for each key
+    def pivot_table(self, keys_to_pivot_list, keys_to_aggregate_list, aggregate_func_list):
+        # First create a list of unique values for each key
         unique_values_list = []
+        for key in keys_to_pivot_list:
+            unique_values = list(set(item[key] for item in self.table))
+            unique_values_list.append(unique_values)
 
-    # Here is an example of of unique_values_list for
-    # keys_to_pivot_list = ['embarked', 'gender', 'class']
-    # unique_values_list =
-    # [['Southampton', 'Cherbourg', 'Queenstown'], ['M', 'F'], ['3', '2','1']]
+        # Get the combination of unique values list using the gen_comb_list function
+        combinations = gen_comb_list(unique_values_list)
 
-    # Get the combination of unique_values_list
-    # You will make use of the function you implemented in Task 2
+        # Initialize the pivot table
+        pivot_table = Table(self.table_name + '_pivot', [])
+
+        # Iterate through each combination
+        for combo in combinations:
+            # Filter the table based on the combination
+            filtered_table = self
+            for idx in range(len(keys_to_pivot_list)):
+                key = keys_to_pivot_list[idx]
+                value = combo[idx]
+                filtered_table = filtered_table.filter(lambda x, k=key, v=value: x[k] == v)
+
+            # Apply aggregate functions to keys to aggregate
+            aggregated_values = []
+            for idx in range(len(keys_to_aggregate_list)):
+                key = keys_to_aggregate_list[idx]
+                aggregate_function = aggregate_func_list[idx]
+                aggregated_value = filtered_table.aggregate(aggregate_function, key)
+                aggregated_values.append({key: aggregated_value})
+
+            # Combine the pivot keys and aggregated values into a dictionary
+            pivot_row = {}
+            for idx in range(len(keys_to_pivot_list)):
+                pivot_row[keys_to_pivot_list[idx]] = combo[idx]
+            for aggr in aggregated_values:
+                pivot_row.update(aggr)
+
+            # Append the row to the pivot table
+            pivot_table.table.append(pivot_row)
+        return pivot_table
 
     def __str__(self):
         return self.table_name + ':' + str(self.table)
@@ -147,10 +176,6 @@ survival_female = table2.filter(lambda x: x['gender'] == 'F' and x['survived'] =
 survived_count_female = len(survival_female.table)
 
 print(f"survival male and female is {survived_count_male} vs {survived_count_female}")
-
-
-
-
 
 
 

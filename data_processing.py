@@ -119,10 +119,12 @@ survived_count_male = len(survival_male.table)
 survival_female = table2.filter(lambda x: x['gender'] == 'F' and x['survived'] == 'yes')
 survived_count_female = len(survival_female.table)
 
+survival_male_southampton = survival_male.filter(lambda x: x['embarked'] == 'southampton')
+survival_count_southampton = len(survival_male_southampton.table)
+
+
 print(f"survival male and female is {survived_count_male} vs {survived_count_female}")
-
-
-
+print(f" total number of male passengers embarked at Southampton = {survival_count_southampton}")
 
 
 
